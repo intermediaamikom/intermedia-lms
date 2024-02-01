@@ -1,0 +1,73 @@
+@startuml 'database lms'
+    entity users {
+        id : uuid
+        --
+        role_id: uuid
+        --
+        division_id : uuid
+        --
+        name: string
+        --
+        username: string
+        --
+        password: string
+    }
+
+    entity roles {
+        id: uuid
+        --
+        role: string
+    }
+
+    entity divisions {
+        id: uuid
+        --
+        name: string
+    }
+
+    entity events {
+        id: uuid
+        --
+        division_id: uuid
+        --
+        name: string
+        --
+        description: text
+        --
+        accasion_date: datetime
+        --
+        start_register: datetime
+        --
+        end_register: datetime
+        --
+        quota: unsigned int
+        --
+        created_at : datetime
+        --
+        updated_at : datetime
+        --
+        deleted_at : datetime
+    }
+
+    entity attendances {
+        id: uint
+        --
+        event_id: uuid
+        --
+        user_id: uuid
+        --
+        submission_link: string
+        --
+        is_competence: boolean
+        --
+        certificate_link: string
+    }
+
+    roles ||--o{ users
+    divisions ||--o{ users
+    divisions ||--o{ events
+    events ||--o{ attendances
+    users ||--o{ attendances
+
+
+@enduml
