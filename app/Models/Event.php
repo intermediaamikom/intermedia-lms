@@ -10,6 +10,10 @@ class Event extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+      'id'
+    ];
+
     protected static function boot()
     {
       parent::boot();
@@ -41,4 +45,11 @@ class Event extends Model
         return 'string';
     }
 
+    public function division() {
+      return $this->belongsTo(Division::class);
+    }
+
+    public function attendances() {
+      return $this->hasMany(Attendance::class);
+    }
 }

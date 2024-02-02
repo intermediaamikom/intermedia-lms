@@ -10,6 +10,10 @@ class Division extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+      'id'
+    ];
+
     protected static function boot()
     {
       parent::boot();
@@ -41,4 +45,11 @@ class Division extends Model
         return 'string';
     }
 
+    public function users() {
+      return $this->hasMany(User::class);
+    }
+
+    public function events() {
+      return $this->hasMany(Event::class);
+    }
 }
