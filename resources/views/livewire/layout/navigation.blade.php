@@ -62,6 +62,7 @@ new class extends Component
                                 {{ __('Log Out') }}
                             </x-dropdown-link>
                         </button>
+                     
                     </x-slot>
                 </x-dropdown>
             </div>

@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Spatie\Permission\Traits\HasRoles;
 
 class Division extends Model
 {
     use HasFactory;
-
+    use HasRoles;
     protected $guarded = [
       'id'
     ];
