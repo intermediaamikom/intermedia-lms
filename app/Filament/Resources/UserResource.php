@@ -42,9 +42,17 @@ class UserResource extends Resource
                     TextInput::make('password')->required(fn(Page $livewire):bool=> $livewire instanceof CreateRecord)->password()->placeholder('Password')
                     ->dehydrateStateUsing(fn(String $state):string => Hash::make($state))
                     ->dehydrated(fn(?string $state):bool => filled($state)),
-                    
+
                     Select::make('roles')->multiple()->relationship('roles', 'name')->required(),
                 ]),
+                Forms\Components\Section::make()
+                    ->schema([
+
+                        Forms\Components\Select::make('division_id')
+                            ->relationship('division', 'name')
+                            ->searchable()
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -59,7 +67,7 @@ class UserResource extends Resource
 
             ])
             ->filters([
-                
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -69,13 +77,6 @@ class UserResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            DivisionRelationManager::class,
-        ];
     }
 
     public static function getPages(): array
