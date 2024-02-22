@@ -26,9 +26,9 @@ class ListEvents extends ListRecords
         return [
             'all' => Tab::make('All'),
             'joined' => Tab::make('Joined')
-                ->modifyQueryUsing(function (Builder $builder) {
-                    return $builder->with('attendances')->where('attendances.user_id', auth()->user()->id);
-                }),
+                ->modifyQueryUsing(
+                    fn (Builder $query) => $query->whereIn('id', DB::table('attendances')->select('event_id')->where('user_id', auth()->user()->id))
+                ),
         ];
     }
 }

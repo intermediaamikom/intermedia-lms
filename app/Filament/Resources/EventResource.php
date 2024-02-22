@@ -9,13 +9,17 @@ use App\Models\Division;
 use App\Models\Event;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -23,6 +27,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\HtmlString;
 
 class EventResource extends Resource
 {
@@ -68,49 +73,78 @@ class EventResource extends Resource
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
                 TextColumn::make('division.name')->searchable()->sortable(),
-                TextColumn::make('occasion_date')->sortable(),
-                TextColumn::make('start_register')->sortable(),
-                TextColumn::make('end_register')->sortable(),
+                TextColumn::make('occasion_date')->sortable()->dateTime(),
+                TextColumn::make('start_register')->sortable()->dateTime(),
+                TextColumn::make('end_register')->sortable()->dateTime(),
                 TextColumn::make('quota')->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('joinEventAction')
-                    ->visible(fn (Event $record) => User::find(Auth::user()->id)->attendances->where('event_id', $record->id)->count() == 0)
+                Tables\Actions\Action::make('detail')
+                    ->label('Detail')
+                    ->icon('heroicon-o-eye')
+                    ->color(Color::Gray)
+                    // ->disabled(fn (Event $record) => $record->quota == 0)
+                    ->visible(fn (Event $record) => $record->users->contains(auth()->user()))
                     ->mountUsing(fn (Forms\ComponentContainer $form, Event $record) => $form->fill([
-                        'division_id' => $record->division->id,
+                        'name' => $record->name,
+                        'description' => $record->description,
+                        'occasion_date' => $record->occasion_date,
+                        'is_competence' => $record->attendances()->where('user_id', auth()->user()->id)->first()->is_competence,
+                        'certificate_link' => $record->attendances()->where('user_id', auth()->user()->id)->first()->certificate_link,
+                        'final_project_link' => $record->attendances()->where('user_id', auth()->user()->id)->first()->final_project_link,
+                    ]))
+                    ->form([
+                        TextInput::make('name')->readOnly(),
+                        Textarea::make('description')->readOnly(),
+                        TextInput::make('occasion_date')->readOnly(),
+                        Checkbox::make('is_competence')->label('Competence')->disabled(),
+                        TextInput::make('certificate_link')->url()->label('Certificate Link')->readOnly(),
+                        TextInput::make('final_project_link')->url()->label('Final Project Link')
+                    ])
+                    ->action(function (array $data, Event $record) {
+                        $attendance = $record->attendances->where('user_id', auth()->user()->id)->first();
+                        $attendance->final_project_link = $data['final_project_link'];
+                        $attendance->save();
+                    })
+                    ->modalAlignment(Alignment::Center)
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->label('Submit Final Project')),
+                Tables\Actions\Action::make('joinEventAction')
+                    ->label('Join')
+                    ->icon('heroicon-o-arrow-left-end-on-rectangle')
+                    ->disabled(fn (Event $record) => $record->quota == 0)
+                    ->visible(fn (Event $record) => !$record->users->contains(auth()->user()))
+                    ->mountUsing(fn (Forms\ComponentContainer $form, Event $record) => $form->fill([
                         'name' => $record->name,
                         'description' => $record->description,
                         'occasion_date' => $record->occasion_date,
                         'quota' => $record->quota,
                         'user_id' => Auth::user()->id
                     ]))
-                    ->label('Join')
                     ->form([
-                        Select::make('division_id')
-                            ->label('Division')
-                            ->relationship('division', 'name'),
                         Select::make('user_id')
-                            ->label('User')
+                            ->label('Join As')
                             ->options(User::query()->pluck('name', 'id')),
                         TextInput::make('name'),
-                        TextInput::make('description'),
-                        TextInput::make('occasion_date'),
-                        TextInput::make('quota'),
+                        Textarea::make('description'),
+                        TextInput::make('occasion_date')
                     ])
-                    ->disabledForm()
-                    ->icon('heroicon-o-arrow-left-end-on-rectangle')
                     ->action(function (array $data, Event $record) {
                         Attendance::create([
                             'event_id' => $record->id,
                             'user_id' => $data['user_id'],
                         ]);
+
+                        $record->quota -= 1;
+                        $record->save();
                     })
+                    ->disabledForm()
                     ->modalAlignment(Alignment::Center)
+                    ->modalSubmitAction(fn (StaticAction $action) => $action->label('Join Event')),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -122,7 +156,7 @@ class EventResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            EventResource\RelationManagers\UsersRelationManager::class
         ];
     }
 
