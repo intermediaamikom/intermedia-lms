@@ -37,4 +37,9 @@ class StatsOverview extends BaseWidget
                 ->icon('heroicon-o-shield-check'),
         ]);
     }
+
+    public static function canView(): bool
+    {
+        return User::find(auth()->user()->id)->hasRole('Super Admin');
+    }
 }

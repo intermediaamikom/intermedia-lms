@@ -52,4 +52,8 @@ class Event extends Model
     public function attendances() {
       return $this->hasMany(Attendance::class);
     }
+
+    public function users() {
+      return $this->belongsToMany(User::class, 'attendances')->withPivot('certificate_link', 'is_competence', 'final_project_link');
+    }
 }
