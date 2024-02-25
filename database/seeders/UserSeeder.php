@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
 
         $admin = User::factory()->create([
             'email' => 'admin@gmail.com',
+            'division_id' => '05ca9b6e-c6d3-4c3b-bf66-861d89e4137a',
         ]);
         $admin->assignRole('Admin');
 
