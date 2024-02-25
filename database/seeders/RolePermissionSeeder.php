@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class RoleAndPermissionSeeder extends Seeder
+class RolePermissionSeeder extends Seeder
 {
     private array $resources = ['user', 'event', 'division', 'role', 'permission'];
     private array $operations = ['create', 'view', 'update', 'delete'];
@@ -20,6 +20,8 @@ class RoleAndPermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
         foreach ($this->resources as $resource) {
             foreach ($this->operations as $operation) {
                 Permission::create([ 'name' => $operation . ' ' . $resource ]);
@@ -33,7 +35,7 @@ class RoleAndPermissionSeeder extends Seeder
         Role::create([ 'name' => 'Super Admin' ]);
 
         // Division Admin can 'create event', 'view event', 'update event', 'delete event', and 'join event'.
-        $divisionAdmin = Role::create([ 'name' => 'Division Admin' ]);
+        $divisionAdmin = Role::create([ 'name' => 'Admin' ]);
         $divisionAdmin->givePermissionTo(collect($this->operations)->map(fn ($item, $key) => $item . ' event')->all());
         $divisionAdmin->givePermissionTo('join event');
 
