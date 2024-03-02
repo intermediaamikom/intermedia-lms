@@ -1,0 +1,32 @@
+# Ignore Laravel specific files and directories
+/node_modules
+/public/storage
+/vendor
+.env
+.phpunit.result.cache
+Homestead.yaml
+Homestead.json
+npm-debug.log
+yarn-error.log
+
+# Ignore Docker specific files
+.dockerignore
+.docker
+
+# Ignore development and testing files
+/tests
+/phpunit.xml
+/phpunit-*.xml
+/phpunit-*.dist.xml
+/phpunit-bridge.xml
+/phpstan.neon
+/psalm.xml
+
+# Ignore editor-specific files
+/.idea
+/.vscode
+
+# Ignore local development files
+Homestead.yaml
+Homestead.json
+.env.*
