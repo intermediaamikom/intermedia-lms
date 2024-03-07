@@ -54,6 +54,6 @@ class Event extends Model
     }
 
     public function users() {
-      return $this->belongsToMany(User::class, 'attendances')->withPivot('certificate_link', 'is_competence', 'final_project_link');
+      return $this->belongsToMany(User::class, 'attendances')->withPivot('certificate_link', 'is_competence', 'final_project_link', 'submission_score', 'participation_score');
     }
 }

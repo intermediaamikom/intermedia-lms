@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\Division;
 use App\Models\Event;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Forms;
@@ -90,31 +91,30 @@ class EventResource extends Resource
                     ->visible(fn (Event $record) => $record->users->contains(auth()->user()))
                     ->mountUsing(fn (Forms\ComponentContainer $form, Event $record) => $form->fill([
                         'name' => $record->name,
-                        'description' => $record->description,
-                        'occasion_date' => $record->occasion_date,
                         'is_competence' => $record->attendances()->where('user_id', auth()->user()->id)->first()->is_competence,
                         'certificate_link' => $record->attendances()->where('user_id', auth()->user()->id)->first()->certificate_link,
                         'final_project_link' => $record->attendances()->where('user_id', auth()->user()->id)->first()->final_project_link,
+                        'submission_score' => $record->attendances()->where('user_id', auth()->user()->id)->first()->submission_score,
+                        'participation_score' => $record->attendances()->where('user_id', auth()->user()->id)->first()->participation_score,
                     ]))
                     ->form([
                         TextInput::make('name')->readOnly(),
-                        Textarea::make('description')->readOnly(),
-                        TextInput::make('occasion_date')->readOnly(),
+                        TextInput::make('final_project_link')->url()->label('Final Project Link'),
                         Checkbox::make('is_competence')->label('Competence')->disabled(),
                         TextInput::make('certificate_link')->url()->label('Certificate Link')->readOnly(),
-                        TextInput::make('final_project_link')->url()->label('Final Project Link')
+                        TextInput::make('submission_score')->url()->label('Submission Score')->readOnly(),
+                        TextInput::make('participation_score')->url()->label('Participation Score')->readOnly(),
                     ])
                     ->action(function (array $data, Event $record) {
                         $attendance = $record->attendances->where('user_id', auth()->user()->id)->first();
                         $attendance->final_project_link = $data['final_project_link'];
                         $attendance->save();
                     })
-                    ->modalAlignment(Alignment::Center)
                     ->modalSubmitAction(fn (StaticAction $action) => $action->label('Submit Final Project')),
                 Tables\Actions\Action::make('joinEventAction')
                     ->label('Join')
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
-                    ->disabled(fn (Event $record) => $record->quota == 0)
+                    ->disabled(fn (Event $record) => $record->quota == 0 || (Carbon::now()->lt(Carbon::parse($record->start_register)) || Carbon::now()->gt($record->end_register)))
                     ->visible(fn (Event $record) => !$record->users->contains(auth()->user()))
                     ->mountUsing(fn (Forms\ComponentContainer $form, Event $record) => $form->fill([
                         'name' => $record->name,
