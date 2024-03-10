@@ -40,7 +40,16 @@ class UserResource extends Resource
                 Fieldset::make('create new user')
                     ->schema([
                         TextInput::make('name')->required()->placeholder('Name')->autofocus(),
-                        TextInput::make('email')->required()->email()->placeholder('Email')->autocomplete('email'),
+                        TextInput::make('username')->required()->placeholder('username')->autofocus()->unique(
+                            table: User::class,
+                            column: 'username',
+                            ignoreRecord: true,
+                        ),
+                        TextInput::make('email')->required()->email()->placeholder('Email')->autocomplete('email')->unique(
+                            table: User::class,
+                            column: 'email',
+                            ignoreRecord: true,
+                        ),
                         TextInput::make('password')->required(fn (Page $livewire): bool => $livewire instanceof CreateRecord)->password()->placeholder('Password')
                             ->dehydrateStateUsing(fn (String $state): string => Hash::make($state))
                             ->dehydrated(fn (?string $state): bool => filled($state)),
@@ -66,6 +75,7 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')->searchable()->sortable(),
+                TextColumn::make('username')->searchable()->sortable(),
                 TextColumn::make('division.name')->label('Division')->searchable(),
                 TextColumn::make('email')->searchable()->sortable(),
                 TextColumn::make('roles.name')->label('Role')->searchable(),

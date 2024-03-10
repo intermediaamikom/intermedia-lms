@@ -63,8 +63,7 @@ class EventResource extends Resource
                 Section::make()->schema([
                     Select::make('division_id')
                         ->relationship('division', 'name')
-                        ->required(),
-                ])
+                ])->visible(fn() => User::find(auth()->user()->id)->hasRole('Super Admin'))
             ]);
     }
 
@@ -115,7 +114,7 @@ class EventResource extends Resource
                     ->label('Join')
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
                     ->disabled(fn (Event $record) => $record->quota == 0 || (Carbon::now()->lt(Carbon::parse($record->start_register)) || Carbon::now()->gt($record->end_register)))
-                    ->visible(fn (Event $record) => !$record->users->contains(auth()->user()))
+                    ->visible(fn (Event $record) => !$record->users->contains(auth()->user()) || User::find(auth()->user()->id)->division_id != $record->division_id)
                     ->mountUsing(fn (Forms\ComponentContainer $form, Event $record) => $form->fill([
                         'name' => $record->name,
                         'description' => $record->description,
@@ -167,5 +166,15 @@ class EventResource extends Resource
             'create' => Pages\CreateEvent::route('/create'),
             'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
+    }
+
+    static function getEloquentQuery(): Builder
+    {
+        $user = User::find(auth()->user()->id);
+        if ($user->hasRole('Super Admin')) {
+            return parent::getEloquentQuery();
+        }
+
+        return parent::getEloquentQuery()->where('division_id', $user->division_id);
     }
 }
