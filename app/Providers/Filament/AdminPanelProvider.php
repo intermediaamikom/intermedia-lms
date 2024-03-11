@@ -27,11 +27,11 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             ->default()
             ->sidebarCollapsibleOnDesktop(true)
             ->id('admin')
             ->path('admin')
+            ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             ->login(Login::class)
             ->profile()
             ->userMenuItems([
