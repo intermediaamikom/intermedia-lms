@@ -12,6 +12,7 @@
         "althinect/filament-spatie-roles-permissions": "^2.2",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
+        "konnco/filament-import": "^2.0.2-beta",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",

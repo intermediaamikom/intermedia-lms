@@ -15,14 +15,14 @@ class Login extends BaseAuth
     {
         return $form
             ->schema([
-                $this->getLoginFormComponent(), 
+                $this->getLoginFormComponent(),
                 $this->getPasswordFormComponent(),
                 $this->getRememberFormComponent(),
             ])
             ->statePath('data');
     }
 
-    protected function getLoginFormComponent(): Component 
+    protected function getLoginFormComponent(): Component
     {
         return TextInput::make('login')
             ->label('Login')
@@ -45,8 +45,8 @@ class Login extends BaseAuth
 
     protected function getCredentialsFromFormData(array $data): array
     {
-        $login_type = filter_var($data['login'], FILTER_VALIDATE_EMAIL ) ? 'email' : 'username';
- 
+        $login_type = filter_var($data['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
         return [
             $login_type => $data['login'],
             'password'  => $data['password'],
