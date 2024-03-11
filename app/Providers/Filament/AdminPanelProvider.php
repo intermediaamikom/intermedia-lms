@@ -18,6 +18,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Filament\Auth\Login;
 use App\Filament\Pages\EditProfile;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\MenuItem;
@@ -34,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop(true)
             ->id('admin')
             ->path('admin')
-            ->login()
+            ->login(Login::class)
             ->profile()
             ->userMenuItems([
                 'profile' => MenuItem::make()->url(fn (): string => EditProfile::getUrl())
