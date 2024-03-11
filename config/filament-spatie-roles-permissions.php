@@ -9,6 +9,8 @@ return [
     'navigation_section_group' => 'filament-spatie-roles-permissions::filament-spatie.section.roles_and_permissions', // Default uses language constant
 
     'team_model' => \App\Models\Team::class,
+    
+    'scope_to_tenant' => true,
 
     /*
      * Set as false to remove from navigation.
@@ -32,9 +34,9 @@ return [
         ],
     ],
 
-    'default_guard_name' => 'web',
+    'default_guard_name' => null,
 
-    'model_filter_key' => 'return \'%\'.$key;', // Eg: 'return \'%\'.$key.'\%\';'
+    'model_filter_key' => 'return \'%\'.$value;', // Eg: 'return \'%\'.$key.'\%\';'
 
     'user_name_column' => 'name',
 
