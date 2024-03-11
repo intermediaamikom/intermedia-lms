@@ -20,17 +20,14 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
 use App\Filament\Auth\Login;
 use App\Filament\Pages\EditProfile;
-use App\Filament\Resources\UserResource;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationBuilder;
-use Filament\Navigation\NavigationGroup;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->plugin(FilamentSpatieRolesPermissionsPlugin::make())   
+            ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             ->default()
             ->sidebarCollapsibleOnDesktop(true)
             ->id('admin')
@@ -51,8 +48,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 // Widgets\AccountWidget::class,
-              
-                
+
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -68,6 +64,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-            
+
     }
 }
