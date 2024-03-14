@@ -6,7 +6,7 @@ git-pull:
 	git pull origin main
 
 composer-install:
-	composer install --optimize-autoloader --no-dev
+	composer update
 
 npm-build:
 	npm update
