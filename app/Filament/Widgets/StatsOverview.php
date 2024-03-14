@@ -16,13 +16,13 @@ class StatsOverview extends BaseWidget
     }
     protected function getStats(): array
     {
+        $divisions = Division::withCount('users')->pluck('users_count', 'name');
         $divisionStats = [];
-        foreach ($this->getDinamicDivision() as $key => $value) {
-            $divisionStats[] = Stat::make($value, User::where('division_id', $key)->count())
+        foreach ($divisions as $key => $value) {
+            $divisionStats[] = Stat::make($key, $value)
                 ->color('blue')
                 ->icon('heroicon-o-user-group')
-                ->description('Total anggota divisi ' . $value)
-                ->descriptionColor('gray');
+                ->description('Total anggota divisi ' . $key);
         }
 
         return array_merge([
@@ -40,6 +40,6 @@ class StatsOverview extends BaseWidget
 
     public static function canView(): bool
     {
-        return User::find(auth()->user()->id)->hasRole('Super Admin');
+        return User::with('roles')->find(auth()->user()->id)->hasRole('Super Admin');
     }
 }

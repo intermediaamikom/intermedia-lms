@@ -14,13 +14,23 @@ class AdminStatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        $user = User::find(auth()->user()->id);
+        $user = User::with('division')->find(auth()->user()->id);
 
         return [
-            Stat::make('Total Event ' . $user->division->name, Event::where('division_id', $user->division->id)->count())
-                ->icon('heroicon-o-star'),
-            Stat::make('Event Saya', Attendance::where('user_id', $user->id)->count())
-                ->icon('heroicon-o-star')
+            Stat::make(
+                'Total Event ' . $user->division->name,
+                Event::where(
+                    'division_id',
+                    $user->division->id
+                )->count()
+            )->icon('heroicon-o-star'),
+            Stat::make(
+                'Event Saya',
+                Attendance::where(
+                    'user_id',
+                    $user->id
+                )->count()
+            )->icon('heroicon-o-star')
                 ->description('Total Event yang saya hadiri'),
         ];
     }

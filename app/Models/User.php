@@ -14,17 +14,17 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles,HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasUuids;
 
     protected static function boot()
     {
-      parent::boot();
+        parent::boot();
 
-      static::creating(function ($model) {
-        if (!($model->getKey())) {
-          $model->{$model->getKeyName()} = (string) Str::uuid();
-        }
-      });
+        static::creating(function ($model) {
+            if (!($model->getKey())) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
     }
 
     /**
@@ -34,7 +34,7 @@ class User extends Authenticatable
      */
     public function getIncrementing()
     {
-      return false;
+        return false;
     }
 
     /**
@@ -52,9 +52,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $guarded = [
-     
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -76,15 +74,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function division() {
-      return $this->belongsTo(Division::class);
+
+    public function division()
+    {
+        return $this->belongsTo(Division::class);
     }
 
-    public function attendances() {
-      return $this->hasMany(Attendance::class);
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
-    public function events() {
-      return $this->belongsToMany(Event::class, 'attendances');
+    public function events()
+    {
+        return $this->belongsToMany(Event::class, 'attendances');
     }
 }
