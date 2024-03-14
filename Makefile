@@ -6,7 +6,7 @@ git-pull:
 	git pull origin main
 
 composer-install:
-	composer update
+	composer install
 
 npm-build:
 	npm update
