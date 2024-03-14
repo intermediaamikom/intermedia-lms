@@ -63,7 +63,7 @@ class EventResource extends Resource
                 Section::make()->schema([
                     Select::make('division_id')
                         ->relationship('division', 'name')
-                ])->visible(fn() => User::find(auth()->user()->id)->hasRole('Super Admin'))
+                ])->visible(fn () => User::find(auth()->user()->id)->hasRole('Super Admin'))
             ]);
     }
 
@@ -168,7 +168,7 @@ class EventResource extends Resource
         ];
     }
 
-    static function getEloquentQuery(): Builder
+    public static function getEloquentQuery(): Builder
     {
         $user = User::find(auth()->user()->id);
         if ($user->hasRole('Super Admin')) {
