@@ -9,6 +9,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Exports\EventAttendancesExporter;
+use Filament\Tables\Actions\ExportAction;
+use Filament\Tables\Actions\ExportBulkAction;
 
 class UsersRelationManager extends RelationManager
 {
@@ -45,7 +48,10 @@ class UsersRelationManager extends RelationManager
                     ->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-circle'),
                 Tables\Columns\TextColumn::make('certificate_link'),
-                Tables\Columns\TextColumn::make('final_project_link'),
+                Tables\Columns\TextColumn::make('final_project_link')
+                    ->copyable()
+                    ->copyMessage('Final project copied')
+                    ->copyMessageDuration(1500),
                 Tables\Columns\TextColumn::make('submission_score'),
                 Tables\Columns\TextColumn::make('participation_score'),
             ])
@@ -54,6 +60,8 @@ class UsersRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make(),
+                ExportAction::make()
+                    ->exporter(EventAttendancesExporter::class)
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -62,6 +70,8 @@ class UsersRelationManager extends RelationManager
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DetachBulkAction::make(),
+                    ExportBulkAction::make()
+                        ->exporter(EventAttendancesExporter::class)
                 ]),
             ]);
     }
