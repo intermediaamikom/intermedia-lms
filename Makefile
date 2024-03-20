@@ -20,3 +20,5 @@ cache:
 	php artisan view:cache
     php artisan icons:cache
     php artisan filament:cache-components
+    php artisan horizon:publish
+    php artisan telescope:publish
