@@ -33,6 +33,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->plugin(FilamentSpatieRolesPermissionsPlugin::make())
             ->login(Login::class)
+            ->databaseNotifications()
             ->profile()
             ->userMenuItems([
                 'profile' => MenuItem::make()->url(fn (): string => EditProfile::getUrl())
@@ -64,6 +65,5 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-
     }
 }
