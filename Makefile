@@ -9,13 +9,15 @@ composer-install:
 	composer install
 
 npm-build:
-	npm update
+	npm install
 	npm run build
 
 cache:
-	php artisan cache:clear
+    php artisan horizon:terminate
+    php artisan optimize:clear
 	php artisan config:cache
 	php artisan route:cache
 	php artisan view:cache
     php artisan icons:cache
+    php artisan optimize
     php artisan filament:cache-components
