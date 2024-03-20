@@ -11,6 +11,10 @@ services:
       POSTGRES_PASSWORD: mysecretpassword
     ports:
       - 5432:5432
+  redis:
+    image: redis:7.2.4-alpine
+    ports:
+      - "6379:6379"
 volumes:
   postgres_data:
 

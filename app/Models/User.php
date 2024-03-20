@@ -11,10 +11,13 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
 use Spatie\Permission\Traits\HasRoles;
+use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
+use Filament\Panel;
+use Filament\Models\Contracts\FilamentUser;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, HasUuids, HasSuperAdmin;
 
     protected static function boot()
     {
@@ -88,5 +91,10 @@ class User extends Authenticatable
     public function events()
     {
         return $this->belongsToMany(Event::class, 'attendances');
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
     }
 }
