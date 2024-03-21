@@ -1,9 +1,6 @@
 .PHONY: all
 
-all: git-pull composer-install npm-build cache
-
-git-pull:
-	git pull origin main
+all: composer-install npm-build cache
 
 composer-install:
 	composer install
@@ -13,12 +10,10 @@ npm-build:
 	npm run build
 
 cache:
-    php artisan horizon:terminate
     php artisan optimize:clear
 	php artisan config:cache
 	php artisan route:cache
 	php artisan view:cache
     php artisan icons:cache
     php artisan filament:cache-components
-    php artisan horizon:publish
     php artisan telescope:publish

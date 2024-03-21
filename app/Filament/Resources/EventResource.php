@@ -101,8 +101,8 @@ class EventResource extends Resource
                         TextInput::make('final_project_link')->url()->label('Final Project Link'),
                         Checkbox::make('is_competence')->label('Competence')->disabled(),
                         TextInput::make('certificate_link')->url()->label('Certificate Link')->readOnly(),
-                        TextInput::make('submission_score')->url()->label('Submission Score')->readOnly(),
-                        TextInput::make('participation_score')->url()->label('Participation Score')->readOnly(),
+                        TextInput::make('submission_score')->label('Submission Score')->readOnly(),
+                        TextInput::make('participation_score')->label('Participation Score')->readOnly(),
                     ])
                     ->action(function (array $data, Event $record) {
                         $attendance = $record->attendances->where('user_id', auth()->user()->id)->first();
