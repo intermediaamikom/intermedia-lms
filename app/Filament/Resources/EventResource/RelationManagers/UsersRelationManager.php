@@ -10,12 +10,14 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Exports\EventAttendancesExporter;
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Group;
 use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Actions\ExportBulkAction;
 
 class UsersRelationManager extends RelationManager
 {
-    protected static string $relationship = 'users';
+    protected static string $relationship = 'attendances';
     protected static ?string $title = "Attendances";
 
     public static function shouldSkipAuthorization(): bool
@@ -27,13 +29,18 @@ class UsersRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
+                Group::make()
+                    ->relationship('user')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+                    ]),
                 Forms\Components\Checkbox::make('is_competence'),
                 Forms\Components\TextInput::make('certificate_link'),
                 Forms\Components\TextInput::make('submission_score'),
                 Forms\Components\TextInput::make('participation_score'),
+
             ]);
     }
 
@@ -42,7 +49,7 @@ class UsersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('user.name'),
                 Tables\Columns\IconColumn::make('is_competence')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-badge')
