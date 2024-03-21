@@ -14,8 +14,10 @@ class EventAttendancesExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('name')->label('name'),
-            ExportColumn::make('username')->label('username'),
+            ExportColumn::make('user.name')->label('name'),
+            ExportColumn::make('user.username')->label('username'),
+            ExportColumn::make('submission_score')->label('nilai tes'),
+            ExportColumn::make('participation_score')->label('nilai keaktifan'),
         ];
     }
 
