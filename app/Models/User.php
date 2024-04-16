@@ -14,6 +14,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Althinect\FilamentSpatieRolesPermissions\Concerns\HasSuperAdmin;
 use Filament\Panel;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable implements FilamentUser
 {
@@ -96,5 +97,9 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
+    }
+
+    public function memberPoints(): HasMany {
+        return $this->hasMany(MemberPoint::class, 'user_id', 'id');
     }
 }
