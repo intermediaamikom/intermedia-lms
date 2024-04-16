@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\DivisionRelationManager;
 use App\Models\Division;
+use App\Models\MemberPoint;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms;
@@ -20,12 +21,14 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Support\View\Components\Modal;
 use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserResource extends Resource
 {
@@ -55,10 +58,10 @@ class UserResource extends Resource
                             ->dehydrated(fn (?string $state): bool => filled($state)),
 
                         Select::make('roles')->multiple()->relationship('roles', 'name')->required()->options(Role::all()->pluck('name', 'id')),
+                        TextInput::make('total_point')->disabled()
                     ]),
                 Forms\Components\Section::make()
                     ->schema([
-
                         Forms\Components\Select::make('division_id')
                             ->relationship('division', 'name')
 
@@ -89,7 +92,41 @@ class UserResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                BulkAction::make('Tambah Point')
+                    ->form([
+                        \Filament\Forms\Components\TextInput::make('point')
+                            ->type('number')
+                            ->required(),
+                        \Filament\Forms\Components\TextInput::make('description')
+                            ->required(),
+                    ])
+                    ->action(function (array $data, $livewire) {
+                        $memberPoints = [];
+                        foreach ($livewire->selectedTableRecords as $value) {
+
+                            $memberPoint = [
+                                'user_id' => $value,
+                                'point' => $data['point'],
+                                'description' => $data['description'],
+                                'created_at' => now(),
+                                'updated_at' => now()
+                            ];
+
+                            MemberPoint::create($memberPoint);
+
+                            $memberPoints[] = $memberPoint;
+                        }
+
+                        // MemberPoint::insert($memberPoints);
+                    }),
             ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            UserResource\RelationManagers\MemberPointsRelationManager::class
+        ];
     }
 
     public static function getPages(): array
