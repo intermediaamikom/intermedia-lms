@@ -102,4 +102,9 @@ class User extends Authenticatable implements FilamentUser
     public function memberPoints(): HasMany {
         return $this->hasMany(MemberPoint::class, 'user_id', 'id');
     }
+
+    public function fileUploads()
+    {
+        return $this->hasMany(FileUpload::class);
+    }
 }
