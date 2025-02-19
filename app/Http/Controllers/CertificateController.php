@@ -12,8 +12,9 @@ class CertificateController extends Controller
     public function downloadCertificate($id)
     {
         $event = Event::find($id);
-        $user = auth()->user(); // Atau dapatkan user sesuai kebutuhan Anda
+        $user = auth()->user();
         $pdf = PDF::loadView('certificate', compact('event', 'user'));
-        return $pdf->download('Kehadiran.pdf');
+        return $pdf->stream('Kehadiran.pdf');
     }
+
 }
