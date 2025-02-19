@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('member_points', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('user_id');
-            $table->unsignedInteger('point');
-            $table->string('description');
-            $table->timestamps();
+        Schema::create('files', function (Blueprint $table) {
+            $table->id(); 
+            $table->uuid('user_id'); 
+            $table->string('file_path'); 
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending'); 
+            $table->timestamps(); 
+            $table->timestamp('approved_at')->nullable(); 
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('member_points');
+        Schema::dropIfExists('files');
     }
 };
