@@ -19,6 +19,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.0",
         "livewire/volt": "^1.0",
+        "nesbot/carbon": "^2.73",
         "predis/predis": "^2.2",
         "psr/simple-cache": "^2.0",
         "sentry/sentry-laravel": "^4.3",
