@@ -10,7 +10,7 @@ chown -R www-data:www-data /var/www/lms.intermediaamikom.org
 chmod -R 775 /var/www/lms.intermediaamikom.org/storage
 
 # Install dependencies
-composer install --no-dev --optimize-autoloader
+composer install --optimize-autoloader
 
 # Link public storage
 php artisan storage:link
