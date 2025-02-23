@@ -12,5 +12,5 @@ chmod -R 775 /var/www/lms.intermediaamikom.org/storage
 # Install dependencies
 composer install --no-dev --optimize-autoloader
 
-# Run database migrations
-php artisan migrate --force
+# Link public storage
+php artisan storage:link
