@@ -94,17 +94,13 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Event::class, 'attendances');
     }
 
+    public function files(): HasMany
+    {
+        return $this->hasMany(File::class);
+    }
+
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
-    }
-
-    public function memberPoints(): HasMany {
-        return $this->hasMany(MemberPoint::class, 'user_id', 'id');
-    }
-
-    public function fileUploads()
-    {
-        return $this->hasMany(FileUpload::class);
     }
 }

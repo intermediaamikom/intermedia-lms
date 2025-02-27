@@ -83,6 +83,7 @@
             <strong>Participant:</strong> {{ $user->name }}<br>
             <strong>Event:</strong> {{ $event->name }}<br>
             <strong>Date:</strong> {{ $event->occasion_date }}
+            <strong>No:</strong> {{ $certificateNumber }}
         </div>
         <div class="signature">
             <img src="https://via.placeholder.com/150x50.png?text=Signature" alt="Signature" style="margin-bottom: 10px;"><br>
