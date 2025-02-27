@@ -6,7 +6,6 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\DivisionRelationManager;
 use App\Models\Division;
-use App\Models\MemberPoint;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Forms;
@@ -92,33 +91,6 @@ class UserResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-                BulkAction::make('Tambah Point')
-                    ->form([
-                        \Filament\Forms\Components\TextInput::make('point')
-                            ->type('number')
-                            ->required(),
-                        \Filament\Forms\Components\TextInput::make('description')
-                            ->required(),
-                    ])
-                    ->action(function (array $data, $livewire) {
-                        $memberPoints = [];
-                        foreach ($livewire->selectedTableRecords as $value) {
-
-                            $memberPoint = [
-                                'user_id' => $value,
-                                'point' => $data['point'],
-                                'description' => $data['description'],
-                                'created_at' => now(),
-                                'updated_at' => now()
-                            ];
-
-                            MemberPoint::create($memberPoint);
-
-                            $memberPoints[] = $memberPoint;
-                        }
-
-                        // MemberPoint::insert($memberPoints);
-                    }),
             ]);
     }
 
