@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,7 +20,6 @@
             align-items: center;
             height: 100vh;
         }
-
         .certificate-container {
             border: 20px solid #d4af37; /* Bingkai emas */
             padding: 50px;
@@ -31,7 +29,6 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             position: relative;
         }
-
         .certificate-container::before {
             content: '';
             position: absolute;
@@ -42,7 +39,6 @@
             border: 2px solid #d4af37;
             z-index: -1;
         }
-
         .title {
             font-size: 2.5em;
             font-weight: bold;
@@ -50,38 +46,35 @@
             margin-bottom: 20px;
             text-transform: uppercase;
         }
-
         .subtitle {
             font-size: 1.2em;
             color: #7f8c8d;
             margin-bottom: 40px;
         }
-
         .event-details {
             font-size: 1.2em;
             color: #34495e;
             margin-bottom: 30px;
         }
-
         .event-details strong {
             color: #d4af37;
         }
-
         .signature {
             margin-top: 50px;
             font-family: 'Brush Script MT', cursive;
             font-size: 1.5em;
             color: #2c3e50;
         }
-
         .footer {
             margin-top: 30px;
             font-size: 0.9em;
             color: #7f8c8d;
         }
+        .page-break {
+            page-break-after: always;
+        }
     </style>
 </head>
-
 <body>
     <div class="certificate-container">
         <div class="title">Certificate of Participation</div>
@@ -99,6 +92,16 @@
             &copy; {{ date('Y') }} Intermedia. All rights reserved.
         </div>
     </div>
+    <div class="page-break"></div>
+    <div class="certificate-container">
+        <div class="title">Additional Page</div>
+        <div class="subtitle">This is an additional page example</div>
+        <div class="event-details">
+            <strong>Some additional details can go here</strong>
+        </div>
+        <div class="footer">
+            &copy; {{ date('Y') }} Intermedia. All rights reserved.
+        </div>
+    </div>
 </body>
-
 </html>
