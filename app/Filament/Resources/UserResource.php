@@ -96,9 +96,7 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            UserResource\RelationManagers\MemberPointsRelationManager::class
-        ];
+        return [];
     }
 
     public static function getPages(): array
