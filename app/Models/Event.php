@@ -25,17 +25,6 @@ class Event extends Model
         });
     }
 
-    // Relasi categories untuk generete nomor sertifikat
-
-    protected $fillable = [
-        'kategori'
-    ];
-
-    public function eventsUsers()
-    {
-        return $this->belongsToMany(User::class, 'events')->withPivot('category_id');
-    }
-
     /**
      * Get the value indicating whether the IDs are incrementing.
      *
@@ -69,5 +58,10 @@ class Event extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'attendances')->withPivot('certificate_link', 'is_competence', 'final_project_link', 'submission_score', 'participation_score');
+    }
+
+    public function event_user()
+    {
+        return $this->belongsToMany(User::class, 'event_user')->withPivot('number_certificate');
     }
 }

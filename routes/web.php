@@ -27,9 +27,6 @@ Route::get('/', function () {
 //     ->middleware(['auth'])
 //     ->name('profile');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/file-uploads', [FileUploadResource::class, 'index'])->name('file-uploads.index');
-});
 
 Route::get('downloadCertificate/{id}', [CertificateController::class, 'downloadCertificate'])->name('certificate.view');
 

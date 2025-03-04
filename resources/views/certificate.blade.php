@@ -70,9 +70,6 @@
             font-size: 0.9em;
             color: #7f8c8d;
         }
-        .page-break {
-            page-break-after: always;
-        }
     </style>
 </head>
 <body>
@@ -82,23 +79,12 @@
         <div class="event-details">
             <strong>Participant:</strong> {{ $user->name }}<br>
             <strong>Event:</strong> {{ $event->name }}<br>
-            <strong>Date:</strong> {{ $event->occasion_date }}
-            <strong>No:</strong> {{ $certificateNumber }}
+            <strong>Date:</strong> {{ \Carbon\Carbon::parse($event->occasion_date)->format('d F Y') }}<br>
+            <strong>Certificate Number:</strong> {{ $certificateNumber }}
         </div>
         <div class="signature">
             <img src="https://via.placeholder.com/150x50.png?text=Signature" alt="Signature" style="margin-bottom: 10px;"><br>
             <strong>Authorized Signature</strong>
-        </div>
-        <div class="footer">
-            &copy; {{ date('Y') }} Intermedia. All rights reserved.
-        </div>
-    </div>
-    <div class="page-break"></div>
-    <div class="certificate-container">
-        <div class="title">Additional Page</div>
-        <div class="subtitle">This is an additional page example</div>
-        <div class="event-details">
-            <strong>Some additional details can go here</strong>
         </div>
         <div class="footer">
             &copy; {{ date('Y') }} Intermedia. All rights reserved.
