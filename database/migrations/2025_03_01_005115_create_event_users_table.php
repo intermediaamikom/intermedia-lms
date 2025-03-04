@@ -11,15 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('event_user', function (Blueprint $table) {
+        Schema::create('event_users', function (Blueprint $table) {
             $table->id();
-            $table->char('user_id', 36);
-            $table->char('event_id', 36);
+            $table->foreignUuid('event_id')
+                  ->references('id')
+                  ->on('events')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
+            $table->foreignUuid('user_id')
+                  ->references('id')
+                  ->on('users')
+                  ->onUpdate('cascade')
+                  ->onDelete('cascade');
             $table->string('number_certificate')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('event_id')->references('id')->on('events')->onDelete('cascade');
             $table->unique(['number_certificate']);
         });
     }
