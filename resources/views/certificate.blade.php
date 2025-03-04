@@ -81,6 +81,8 @@
             <strong>Event:</strong> {{ $event->name }}<br>
             <strong>Date:</strong> {{ \Carbon\Carbon::parse($event->occasion_date)->format('d F Y') }}<br>
             <strong>Certificate Number:</strong> {{ $certificateNumber }}
+            <Strong>Nilai Kehadiran: </Strong> {{ $participantValue }}
+            <Strong>Nilai Tugas: </Strong> {{ $submissionValue }}
         </div>
         <div class="signature">
             <img src="https://via.placeholder.com/150x50.png?text=Signature" alt="Signature" style="margin-bottom: 10px;"><br>

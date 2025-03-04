@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Attendance;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -45,6 +46,20 @@ class CertificateController extends Controller
             $monthRoman,
             Carbon::parse($event->occasion_date)->year
         );
+    }
+
+    public function getAttendanceValue($eventId, $userId)
+    {
+        $attendance = Attendance::where('event_id', $eventId)
+            ->where('user_id', $userId)
+            ->first();
+
+        if ($attendance) {
+            return [
+                'participantValue' => $attendance->participation_score,
+                'submissionValue' => $attendance->submission_score,
+            ];
+        }
     }
 
     private function convertToRoman($month)
@@ -94,11 +109,15 @@ class CertificateController extends Controller
             }
         }
 
+        $attendanceValues = $this->getAttendanceValue($event->id, $user->id);
+
         // Generate PDF
         $pdf = Pdf::loadView('certificate', [
             'event' => $event,
             'user' => $user,
             'certificateNumber' => $certificateNumber,
+            'participantValue' => $attendanceValues['participantValue'],
+            'submissionValue' => $attendanceValues['submissionValue'],
         ]);
 
         return $pdf->stream('certificate.pdf');
