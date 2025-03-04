@@ -94,9 +94,9 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsToMany(Event::class, 'attendances');
     }
 
-    public function event_user()
+    public function event_users()
     {
-        return $this->belongsToMany(Event::class, 'event_user')->withPivot('number_certificate');
+        return $this->belongsToMany(Event::class, 'event_users')->withPivot('number_certificate');
     }
 
     public function files(): HasMany

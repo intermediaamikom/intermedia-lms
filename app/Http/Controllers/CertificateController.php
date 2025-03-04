@@ -6,31 +6,35 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Event;
 use App\Models\User;
-use App\Models\Category;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class CertificateController extends Controller
 {
-
-    public function generateCertificateNumber(Event $event)
+    public function generateCertificateNumber(Event $event, User $user)
     {
-        // Hitung jumlah peserta yang sudah terdaftar di event ini
-        $registeredUsersCount = $event->event_user()->count();
+        $existingCertificate = $event->event_users()
+            ->where('user_id', $user->id)
+            ->whereNotNull('number_certificate')
+            ->first();
 
-        // Hitung sisa kuota
-        $remainingQuota = $event->quota - $registeredUsersCount;
-
-        // Pastikan sisa kuota tidak negatif
-        if ($remainingQuota < 0) {
-            $remainingQuota = 0;
+        if ($existingCertificate) {
+            return $existingCertificate->pivot->number_certificate;
         }
 
-        // Format nomor sertifikat berdasarkan sisa kuota
-        $certificateNumber = str_pad($remainingQuota, 3, '0', STR_PAD_LEFT);
+        $lastCertificateNumber = DB::table('event_users')
+            ->whereNotNull('number_certificate')
+            ->orderBy('number_certificate', 'desc')
+            ->value('number_certificate');
 
+        if (!$lastCertificateNumber) {
+            $certificateNumber = '001';
+        } else {
+            $lastNumber = intval(substr($lastCertificateNumber, 0, 3));
+            $nextNumber = $lastNumber + 1;
+            $certificateNumber = str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        }
         $userCategory = 'F'; // Default F
-
-        // Konversi bulan ke Romawi
         $monthRoman = $this->convertToRoman(Carbon::parse($event->occasion_date)->month);
 
         return sprintf(
@@ -57,9 +61,8 @@ class CertificateController extends Controller
             9 => 'IX',
             10 => 'X',
             11 => 'XI',
-            12 => 'XII',
+            12 => 'XII'
         ];
-
         return $romans[$month] ?? '';
     }
 
@@ -68,23 +71,27 @@ class CertificateController extends Controller
         $event = Event::findOrFail($eventId);
         $user = auth()->user();
 
-        // Cek apakah user sudah terdaftar di event ini
-        $pivotData = $event->users()->where('user_id', $user->id)->first();
+        $pivotData = $event->event_users()->where('user_id', $user->id)->first();
 
         if (!$pivotData) {
-            return response()->json(['error' => 'Anda belum terdaftar di event ini.'], 404);
-        }
+            $certificateNumber = $this->generateCertificateNumber($event, $user);
 
-        // Jika nomor sertifikat belum ada, generate dan simpan
-        if (is_null($pivotData->pivot->number_certificate)) {
-            $certificateNumber = $this->generateCertificateNumber($event);
-
-            // Update nomor sertifikat di tabel pivot event_user
-            $event->event_user()->updateExistingPivot($user->id, [
+            $event->event_users()->attach($user->id, [
                 'number_certificate' => $certificateNumber,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         } else {
-            $certificateNumber = $pivotData->pivot->number_certificate;
+            if (is_null($pivotData->pivot->number_certificate)) {
+                $certificateNumber = $this->generateCertificateNumber($event, $user);
+
+                $event->event_users()->updateExistingPivot($user->id, [
+                    'number_certificate' => $certificateNumber,
+                    'updated_at' => now(),
+                ]);
+            } else {
+                $certificateNumber = $pivotData->pivot->number_certificate;
+            }
         }
 
         // Generate PDF

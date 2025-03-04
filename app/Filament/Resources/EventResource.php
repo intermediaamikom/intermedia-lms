@@ -110,12 +110,6 @@ class EventResource extends Resource
                         $attendance->save();
                     })
                     ->modalSubmitAction(fn(StaticAction $action) => $action->label('Submit Final Project')),
-                Tables\Actions\Action::make('viewCertificateAction')
-                    ->label('Sertifikat Kehadiran')
-                    ->icon('heroicon-o-document-text')
-                    ->visible(fn(Event $record) => $record->users->contains(auth()->user()) && Carbon::now()->gt(Carbon::parse($record->occasion_date)))
-                    ->url(fn(Event $record) => route('certificate.view', ['id' => $record->id, 'event' => $record->id, 'user' => auth()->user()->id]))
-                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('joinEventAction')
                     ->label('Join')
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
@@ -156,6 +150,20 @@ class EventResource extends Resource
                     ->disabledForm()
                     ->modalAlignment(Alignment::Center)
                     ->modalSubmitAction(fn(StaticAction $action) => $action->label('Join Event')),
+                Tables\Actions\Action::make('viewCertificateAction')
+                    ->label('Download Sertifikat')
+                    ->icon('heroicon-o-document-text')
+                    ->visible(function (Event $record) {
+                        $isUserRegistered = $record->users->contains(auth()->user());
+                        $isEventFinished = Carbon::now()->gt(Carbon::parse($record->occasion_date));
+                        $attendance = $record->attendances()
+                            ->where('user_id', auth()->user()->id)
+                            ->first();
+                        $isScoresFilled = $attendance && !is_null($attendance->submission_score) && !is_null($attendance->participation_score);
+                        return $isUserRegistered && $isEventFinished && $isScoresFilled;
+                    })
+                    ->url(fn(Event $record) => route('certificate.view', ['id' => $record->id, 'event' => $record->id, 'user' => auth()->user()->id]))
+                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('cancelJoinEventAction')
                     ->label('Batal Join')
                     ->icon('heroicon-o-arrow-left-end-on-rectangle')
