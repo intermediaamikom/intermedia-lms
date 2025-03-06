@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Filament\Resources\FileUploadResource;
 use App\Http\Controllers\CertificateController;
 
 /*
