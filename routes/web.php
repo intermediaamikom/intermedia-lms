@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Filament\Resources\FileUploadResource;
 use App\Http\Controllers\CertificateController;
 
 /*
@@ -27,9 +26,6 @@ Route::get('/', function () {
 //     ->middleware(['auth'])
 //     ->name('profile');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/file-uploads', [FileUploadResource::class, 'index'])->name('file-uploads.index');
-});
 
 Route::get('downloadCertificate/{id}', [CertificateController::class, 'downloadCertificate'])->name('certificate.view');
 
