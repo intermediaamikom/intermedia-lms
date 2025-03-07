@@ -12,7 +12,7 @@
         "laravel-vite-plugin": "^0.1.0",
         "postcss": "^8.4.31",
         "tailwindcss": "^4.0.7",
-        "vite": "^6.1.1"
+        "vite": "^6.2.1"
     },
     "dependencies": {
         "@jridgewell/sourcemap-codec": "^1.5.0",
