@@ -89,25 +89,10 @@ class CertificateController extends Controller
         $pivotData = $event->event_users()->where('user_id', $user->id)->first();
 
         if (!$pivotData) {
-            $certificateNumber = $this->generateCertificateNumber($event, $user);
-
-            $event->event_users()->attach($user->id, [
-                'number_certificate' => $certificateNumber,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-        } else {
-            if (is_null($pivotData->pivot->number_certificate)) {
-                $certificateNumber = $this->generateCertificateNumber($event, $user);
-
-                $event->event_users()->updateExistingPivot($user->id, [
-                    'number_certificate' => $certificateNumber,
-                    'updated_at' => now(),
-                ]);
-            } else {
-                $certificateNumber = $pivotData->pivot->number_certificate;
-            }
+            return response()->json(['error' => 'Anda Belum Terdaftar Di Event Ini.'], 404);
         }
+
+        $certificateNumber = $pivotData->pivot->number_certificate;
 
         $attendanceValues = $this->getAttendanceValue($event->id, $user->id);
 
