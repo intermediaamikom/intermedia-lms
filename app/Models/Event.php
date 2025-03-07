@@ -11,18 +11,18 @@ class Event extends Model
     use HasFactory;
 
     protected $guarded = [
-      'id'
+        'id'
     ];
 
     protected static function boot()
     {
-      parent::boot();
+        parent::boot();
 
-      static::creating(function ($model) {
-        if (!($model->getKey())) {
-          $model->{$model->getKeyName()} = (string) Str::uuid();
-        }
-      });
+        static::creating(function ($model) {
+            if (!($model->getKey())) {
+                $model->{$model->getKeyName()} = (string) Str::uuid();
+            }
+        });
     }
 
     /**
@@ -32,7 +32,7 @@ class Event extends Model
      */
     public function getIncrementing()
     {
-      return false;
+        return false;
     }
 
     /**
@@ -45,15 +45,23 @@ class Event extends Model
         return 'string';
     }
 
-    public function division() {
-      return $this->belongsTo(Division::class);
+    public function division()
+    {
+        return $this->belongsTo(Division::class);
     }
 
-    public function attendances() {
-      return $this->hasMany(Attendance::class);
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
-    public function users() {
-      return $this->belongsToMany(User::class, 'attendances')->withPivot('certificate_link', 'is_competence', 'final_project_link', 'submission_score', 'participation_score');
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'attendances')->withPivot('certificate_link', 'is_competence', 'final_project_link', 'submission_score', 'participation_score');
+    }
+
+    public function event_users()
+    {
+        return $this->belongsToMany(User::class, 'event_users')->withPivot('number_certificate');
     }
 }

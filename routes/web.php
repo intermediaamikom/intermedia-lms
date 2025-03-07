@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CertificateController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function() {
+Route::get('/', function () {
     return redirect('/admin');
 });
 
@@ -24,5 +25,8 @@ Route::get('/', function() {
 // Route::view('profile', 'profile')
 //     ->middleware(['auth'])
 //     ->name('profile');
+
+
+Route::get('downloadCertificate/{id}', [CertificateController::class, 'downloadCertificate'])->name('certificate.view');
 
 // require __DIR__.'/auth.php';
