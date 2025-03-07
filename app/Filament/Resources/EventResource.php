@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EventResource\Pages;
+use App\Http\Controllers\CertificateController;
 use App\Filament\Resources\EventResource\RelationManagers;
 use App\Models\Attendance;
 use App\Models\Division;
@@ -29,7 +30,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
-use App\Models\Certificate;
+use Illuminate\Support\Facades\DB;
 
 class EventResource extends Resource
 {
@@ -139,13 +140,34 @@ class EventResource extends Resource
                         TextInput::make('occasion_date')->label('Tanggal Acara')
                     ])
                     ->action(function (array $data, Event $record) {
-                        Attendance::create([
-                            'event_id' => $record->id,
-                            'user_id' => $data['user_id'],
-                        ]);
+                        DB::transaction(function () use ($data, $record) {
+                            $user = User::find($data['user_id']);
 
-                        $record->quota -= 1;
-                        $record->save();
+                            $event = Event::where('id', $record->id)
+                                ->where('quota', '>', 0)
+                                ->lockForUpdate() // Lock baris untuk mencegah race condition
+                                ->first();
+
+                            if (!$event) {
+                                throw new \Exception('Kuota event sudah habis.');
+                            }
+
+                            $certificateNumber = (new CertificateController)->generateCertificateNumber($record, $user);
+
+                            $event->event_users()->attach($user->id, [
+                                'number_certificate' => $certificateNumber,
+                                'created_at' => now(),
+                                'updated_at' => now(),
+                            ]);
+
+                            Attendance::create([
+                                'event_id' => $record->id,
+                                'user_id' => $data['user_id'],
+                            ]);
+
+                            $record->quota -= 1;
+                            $record->save();
+                        });
                     })
                     ->disabledForm()
                     ->modalAlignment(Alignment::Center)
@@ -185,10 +207,13 @@ class EventResource extends Resource
                         TextInput::make('occasion_date')->label('Tanggal Acara')
                     ])
                     ->action(function (array $data, Event $record) {
-                        $record->users()->detach($data['user_id']);
+                        DB::transaction(function () use ($data, $record) {
+                            $record->users()->detach($data['user_id']);
+                            $record->event_users()->detach($data['user_id']);
 
-                        $record->quota += 1;
-                        $record->save();
+                            $record->quota += 1;
+                            $record->save();
+                        });
                     })
                     ->disabledForm()
                     ->modalAlignment(Alignment::Center)
