@@ -34,10 +34,10 @@ class EditFile extends EditRecord
         }
 
         if ($data['status'] == 'approved') {
-            $user->total_point = $user->total_point + ($data['points'] - $record->points);
+            $user->total_point = max(0, $user->total_point + ($data['points'] - $record->points));
         } else {
             $data['points'] = 0;
-            $user->total_point = $user->total_point - $record->points;
+            $user->total_point = max(0, $user->total_point - $record->points);
         }
         $user->save();
         $record->update($data);
