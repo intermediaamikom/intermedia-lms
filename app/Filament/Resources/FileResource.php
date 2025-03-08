@@ -29,7 +29,15 @@ class FileResource extends Resource
                     ->acceptedFileTypes(['application/pdf'])
                     ->directory('uploads')
                     ->maxSize(102400)
+                    ->visible(fn() => !(User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])))
                     ->required(),
+                Forms\Components\Actions::make([
+                    Forms\Components\Actions\Action::make('Preview File')
+                    ->url(function ($record) {
+                        return Storage::url($record->file_path);
+                    })
+                    ->openUrlInNewTab()
+                ])->visible(fn() => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Select::make('status')
