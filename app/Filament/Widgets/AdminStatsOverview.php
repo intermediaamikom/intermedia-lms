@@ -32,6 +32,9 @@ class AdminStatsOverview extends BaseWidget
                 )->count()
             )->icon('heroicon-o-star')
                 ->description('Total Event yang saya hadiri'),
+            Stat::make('Point Keaktivan', $user->total_point)
+                ->icon('heroicon-o-star')
+                ->description('Total point keaktifan yang dimiliki'),
         ];
     }
 
