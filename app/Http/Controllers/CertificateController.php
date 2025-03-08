@@ -39,7 +39,7 @@ class CertificateController extends Controller
         $monthRoman = $this->convertToRoman(Carbon::parse($event->occasion_date)->month);
 
         return sprintf(
-            '%s/%s/SRT-%s/INTERMEDIA/%s/%s',
+            '%s/%s/SRT-BE SMART/INTERMEDIA/%s/%s',
             $certificateNumber,
             $userCategory,
             str_replace(' ', '-', strtoupper($event->name)),

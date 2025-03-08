@@ -24,16 +24,24 @@ class EditFile extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
- 
+
     protected function handleRecordUpdate(Model $record, array $data): File
     {
         $user = User::find($record->user_id);
-        $user->total_point = $user->total_point + ($data['points'] - $record->points);
+
+        if ($record->points == 0 && $data['points'] != 0) {
+            $data['status'] = 'approved';
+        }
+
+        if ($data['status'] == 'approved') {
+            $user->total_point = $user->total_point + ($data['points'] - $record->points);
+        } else {
+            $data['points'] = 0;
+            $user->total_point = $user->total_point - $record->points;
+        }
         $user->save();
         $record->update($data);
-    
+
         return $record;
     }
-
-
 }

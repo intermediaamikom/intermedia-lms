@@ -41,13 +41,13 @@ class FileResource extends Resource
                             ])
                             ->default('pending')
                             ->required()
-                            ->visible(fn () => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
+                            ->visible(fn() => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
                         Forms\Components\TextInput::make('points')
                             ->label('Points')
                             ->numeric()
                             ->default(0)
                             ->required()
-                            ->visible(fn () => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
+                            ->visible(fn() => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
                     ]),
             ])
             ->columns(1);
@@ -58,7 +58,7 @@ class FileResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('file_path')
-                    ->label('File Thumbnail')
+                    ->label('File')
                     ->circular()
                     ->size(50)
                     ->getStateUsing(function ($record) {
@@ -71,11 +71,13 @@ class FileResource extends Resource
                         return Storage::url($record->file_path);
                     })
                     ->openUrlInNewTab(),
+                Tables\Columns\TextColumn::make('user.username')->label('NIM'),
+                Tables\Columns\TextColumn::make('user.name')->label('Member'),
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
-                    ->formatStateUsing(fn ($state) => ucfirst($state)),
+                    ->formatStateUsing(fn($state) => ucfirst($state)),
                 Tables\Columns\TextColumn::make('points')->label('Points'),
-                Tables\Columns\TextColumn::make('created_at')->label('Uploaded At')->dateTime(),
+                Tables\Columns\TextColumn::make('created_at')->label('Uploaded At')->dateTime()->sortable(),
             ])
             ->filters([
                 //
@@ -92,13 +94,13 @@ class FileResource extends Resource
                             ])
                             ->default('pending')
                             ->required()
-                            ->visible(fn () => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
+                            ->visible(fn() => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
                         Forms\Components\TextInput::make('points')
                             ->label('Points')
                             ->numeric()
                             ->default(0)
                             ->required()
-                            ->visible(fn () => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
+                            ->visible(fn() => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
                     ])
                     ->action(function (File $record, array $data) {
                         $record->update($data);
@@ -109,7 +111,8 @@ class FileResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array
