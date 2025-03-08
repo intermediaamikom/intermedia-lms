@@ -27,10 +27,10 @@ class EditFile extends EditRecord
  
     protected function handleRecordUpdate(Model $record, array $data): File
     {
-        $record->update($data);
         $user = User::find($record->user_id);
-        $user->total_point = $user->total_point + $record->points;
+        $user->total_point = $user->total_point + ($data['points'] - $record->points);
         $user->save();
+        $record->update($data);
     
         return $record;
     }
