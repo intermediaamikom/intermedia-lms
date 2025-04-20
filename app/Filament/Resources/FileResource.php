@@ -34,7 +34,7 @@ class FileResource extends Resource
                 Forms\Components\Actions::make([
                     Forms\Components\Actions\Action::make('Preview File')
                     ->url(function ($record) {
-                        return Storage::url($record->file_path);
+                        return $record ? Storage::url($record->file_path) : "";
                     })
                     ->openUrlInNewTab()
                 ])->visible(fn() => User::find(Auth::id())->hasRole(['Super Admin', 'Admin'])),
