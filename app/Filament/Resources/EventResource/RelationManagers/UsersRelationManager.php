@@ -37,7 +37,6 @@ class UsersRelationManager extends RelationManager
                             ->maxLength(255),
                     ]),
                 Forms\Components\Checkbox::make('is_competence'),
-                Forms\Components\TextInput::make('certificate_link'),
                 Forms\Components\TextInput::make('submission_score'),
                 Forms\Components\TextInput::make('participation_score'),
 
@@ -54,7 +53,6 @@ class UsersRelationManager extends RelationManager
                     ->boolean()
                     ->trueIcon('heroicon-o-check-badge')
                     ->falseIcon('heroicon-o-x-circle'),
-                Tables\Columns\TextColumn::make('certificate_link'),
                 Tables\Columns\TextColumn::make('final_project_link')
                     ->copyable()
                     ->copyMessage('Final project copied')

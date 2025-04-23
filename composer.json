@@ -10,7 +10,6 @@
     "require": {
         "php": "^8.1",
         "althinect/filament-spatie-roles-permissions": "^2.2",
-        "barryvdh/laravel-dompdf": "^3.1",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
         "konnco/filament-import": "^2.0.2-beta",
@@ -23,7 +22,8 @@
         "predis/predis": "^2.2",
         "psr/simple-cache": "^2.0",
         "sentry/sentry-laravel": "^4.3",
-        "spatie/laravel-permission": "^6.3"
+        "spatie/laravel-permission": "^6.3",
+        "tecnickcom/tcpdf": "^6.9"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.12",

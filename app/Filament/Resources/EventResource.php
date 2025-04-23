@@ -92,7 +92,6 @@ class EventResource extends Resource
                     ->mountUsing(fn(Forms\ComponentContainer $form, Event $record) => $form->fill([
                         'name' => $record->name,
                         'is_competence' => $record->attendances()->where('user_id', auth()->user()->id)->first()->is_competence,
-                        'certificate_link' => $record->attendances()->where('user_id', auth()->user()->id)->first()->certificate_link,
                         'final_project_link' => $record->attendances()->where('user_id', auth()->user()->id)->first()->final_project_link,
                         'submission_score' => $record->attendances()->where('user_id', auth()->user()->id)->first()->submission_score,
                         'participation_score' => $record->attendances()->where('user_id', auth()->user()->id)->first()->participation_score,
@@ -101,7 +100,6 @@ class EventResource extends Resource
                         TextInput::make('name')->readOnly(),
                         TextInput::make('final_project_link')->url()->label('Link Final Projek'),
                         Checkbox::make('is_competence')->label('Kompeten')->disabled(),
-                        TextInput::make('certificate_link')->url()->label('Link E-Sertifikat')->readOnly(),
                         TextInput::make('submission_score')->url()->label('Nilai Submission')->readOnly(),
                         TextInput::make('participation_score')->url()->label('Nilai Participation')->readOnly(),
                     ])
