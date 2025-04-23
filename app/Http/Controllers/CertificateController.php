@@ -182,6 +182,6 @@ class CertificateController extends Controller
 
         return response($pdf->Output('multi-page-background.pdf', 'S'))
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'inline; filename="' . str_replace(' ', '-', strtoupper($user->name)) . '-' . str_replace(' ', '-', strtoupper($user->name)) . '.pdf"');
+            ->header('Content-Disposition', 'inline; filename="' . str_replace(' ', '-', strtoupper($user->name)) . '-' . str_replace(' ', '-', strtoupper($event->name)) . '.pdf"');
     }
 }
