@@ -146,7 +146,7 @@ class CertificateController extends Controller
         $pdf->Cell($horizontalMargin, 3, '', 0, 0);
         $pdf->Cell($contentWidth, 3, Carbon::parse($event->occasion_date)->isoFormat('dddd, D MMMM YYYY'), 0, 1, 'C', true);
 
-        $pdf->Image(resource_path('images/signature-febri.png'), 213.11, 155.48, 25.23, 25.23);
+        // $pdf->Image(resource_path('images/signature-febri.png'), 213.11, 155.48, 25.23, 25.23);
 
         $pdf->AddPage();
 
@@ -178,7 +178,7 @@ class CertificateController extends Controller
         $pdf->Cell($startScoreBoxX, $scoreBoxHeight, '', 0, 0);
         $pdf->Cell($scoreBoxWidth, $scoreBoxHeight, $attendanceValues['submissionValue'], 0, 1, 'C', true);
 
-        $pdf->Image(resource_path('images/signature-febri.png'), 140.21, 160.78, 25.23, 25.23);
+        // $pdf->Image(resource_path('images/signature-febri.png'), 140.21, 160.78, 25.23, 25.23);
 
         return response($pdf->Output('multi-page-background.pdf', 'S'))
             ->header('Content-Type', 'application/pdf')
