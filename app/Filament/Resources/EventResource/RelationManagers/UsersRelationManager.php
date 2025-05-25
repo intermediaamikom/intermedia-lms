@@ -10,15 +10,20 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Exports\EventAttendancesExporter;
+use App\Http\Controllers\CertificateController;
+use App\Models\Event;
+use App\Models\User;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Group;
 use Filament\Tables\Actions\ExportAction;
 use Filament\Tables\Actions\ExportBulkAction;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class UsersRelationManager extends RelationManager
 {
-    protected static string $relationship = 'attendances';
-    protected static ?string $title = "Attendances";
+    protected static string $relationship = 'users';
+    protected static ?string $title = "Daftar Hadir";
 
     public static function shouldSkipAuthorization(): bool
     {
@@ -27,20 +32,17 @@ class UsersRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Group::make()
-                    ->relationship('user')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->maxLength(255),
-                    ]),
-                Forms\Components\Checkbox::make('is_competence'),
-                Forms\Components\TextInput::make('submission_score'),
-                Forms\Components\TextInput::make('participation_score'),
-
-            ]);
+        return $form->schema([
+            Forms\Components\Select::make('user_id')
+                ->label('User')
+                ->relationship('users', 'name')
+                ->required()
+                ->hiddenOn('edit'),
+            Forms\Components\Checkbox::make('is_competence'),
+            Forms\Components\TextInput::make('final_project_link'),
+            Forms\Components\TextInput::make('submission_score'),
+            Forms\Components\TextInput::make('participation_score'),
+        ]);
     }
 
     public function table(Table $table): Table
@@ -48,7 +50,8 @@ class UsersRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('user.name'),
+                Tables\Columns\TextColumn::make('name')->label('User Name'),
+                Tables\Columns\TextColumn::make('username'),
                 Tables\Columns\IconColumn::make('is_competence')
                     ->boolean()
                     ->trueIcon('heroicon-o-check-badge')
@@ -64,7 +67,31 @@ class UsersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\AttachAction::make(),
+                Tables\Actions\AttachAction::make()
+                    ->after(function (array $data) {
+                        $user = User::find($data['recordId']);
+                        $record = $this->getOwnerRecord();
+
+                        $event = Event::where('id', $record->id)
+                            ->where('quota', '>', 0)
+                            ->lockForUpdate() // Lock baris untuk mencegah race condition
+                            ->first();
+
+                        if (!$event) {
+                            throw new \Exception('Kuota event sudah habis.');
+                        }
+
+                        $certificateNumber = (new CertificateController)->generateCertificateNumber($record, $user);
+
+                        $event->event_users()->attach($user->id, [
+                            'number_certificate' => $certificateNumber,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ]);
+
+                        $record->quota -= 1;
+                        $record->save();
+                    }),
                 ExportAction::make()
                     ->exporter(EventAttendancesExporter::class)
             ])
