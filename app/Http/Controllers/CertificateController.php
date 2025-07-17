@@ -84,7 +84,7 @@ class CertificateController extends Controller
     public function downloadCertificate($eventId)
     {
         $event = Event::findOrFail($eventId);
-        $user = auth()->user();
+        $user = User::find(request('user'));
 
         $pivotData = $event->event_users()->where('user_id', $user->id)->first();
 

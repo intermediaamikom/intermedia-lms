@@ -98,6 +98,22 @@ class UsersRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DetachAction::make(),
+                Tables\Actions\Action::make('viewCertificateAction')
+                    ->label('Preview Sertifikat')
+                    ->icon('heroicon-o-document-text')
+                    ->visible(function (User $user) {
+                        $record = $this->getOwnerRecord();
+                        $attendance = $record->attendances()
+                            ->where('user_id', $user->id)
+                            ->first();
+                        $isScoresFilled = $attendance && !is_null($attendance->submission_score) && !is_null($attendance->participation_score);
+                        return $isScoresFilled;
+                    })
+                    ->url(function (User $user) {
+                        $record = $this->getOwnerRecord();
+                        return route('certificate.view', ['id' => $record->id, 'event' => $record->id, 'user' => $user->id]);
+                    })
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
