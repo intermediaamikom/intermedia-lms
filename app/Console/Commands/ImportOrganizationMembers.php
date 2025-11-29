@@ -52,7 +52,6 @@ class ImportOrganizationMembers extends Command
                 continue;
             }
 
-            $division = $member['divisi'];
             // Prepare user data
             $nim = $member['nim'];
             $userData = [
@@ -67,7 +66,7 @@ class ImportOrganizationMembers extends Command
 
             // Check if the user already exists
             if (User::where('username', $nim)->exists()) {
-                $this->warn("[$division] User with NIM $nim already exists. Skipping...");
+                $this->warn("User with NIM $nim already exists. Skipping...");
                 continue;
             }
 
@@ -77,7 +76,7 @@ class ImportOrganizationMembers extends Command
             // Assign "Member" role
             if ($user) {
                 $user->assignRole('Member');
-                $this->info("[$division] User {$user->name} (NIM: $nim) imported and assigned 'Member' role.");
+                $this->info("User {$user->name} (NIM: $nim) imported and assigned 'Member' role.");
             } else {
                 $this->error("Failed to insert user: " . json_encode($userData));
             }
